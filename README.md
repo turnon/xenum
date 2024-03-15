@@ -14,12 +14,31 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ## Usage
 
+### lazy_flatten
+
+works like `Array#flatten`, but for all `Enumerable`, and it is lazy
+
+```ruby
+[
+  3.times,
+  3,
+  4,
+  [5, [6,7]],
+  (8..10),
+  Enumerator.new{|e| n = 10; loop{e << n+=1}}
+].lazy_flatten.first(15)
+# [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+```
+
 ### lazy_product
 
 works like `Array#product`, but not limited to `Array`
 
 ```ruby
-3.times.lazy_product((3..5), [6,7,8]).take(6)
+3.times.lazy_product(
+  (3..5),
+  [6,7,8]
+).take(6)
 # [[0, 3, 6], [0, 3, 7], [0, 3, 8], [0, 4, 6], [0, 4, 7], [0, 4, 8]]
 ```
 

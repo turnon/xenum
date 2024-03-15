@@ -7,6 +7,25 @@ module Xenum
 end
 
 module Enumerable
+  def lazy_flatten(level = nil)
+    these = self
+    level = -1 if level.nil?
+
+    Enumerator.new do |yielder|
+      level.nil?
+      these.each do |this|
+        if Enumerable === this && level != 0
+          this.lazy_flatten(level - 1).each do |sub|
+             yielder.yield(sub)
+          end
+          next
+        end
+
+        yielder.yield(this)
+      end
+    end
+  end
+
   def lazy_product(*enums)
     if enums.empty?
       return Enumerator.new do |yielder|
