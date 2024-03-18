@@ -26,6 +26,16 @@ module Enumerable
     end
   end
 
+  def lazy_insert(index, *objs)
+    return self if objs.empty?
+
+    if index >= 0
+      lazy_insert_pos(index, objs)
+    else
+      lazy_insert_neg(index, objs)
+    end
+  end
+
   def lazy_product(*enums)
     if enums.empty?
       return Enumerator.new do |yielder|
@@ -89,6 +99,50 @@ module Enumerable
         e.yield(remain.next)
       rescue StopIteration
         break
+      end
+    end
+  end
+
+  private
+
+  def lazy_insert_neg(index, objs)
+    these = Enumerator === self ? self : self.to_enum
+    queue = []
+
+    (index.abs - 1).times do
+      begin
+        queue << these.next
+      rescue StopIteration
+        raise IndexError, "index #{index} too small; minimum: #{-(queue.size + 1)}"
+      end
+    end
+
+    Enumerator.new do |yielder|
+      loop do
+        begin
+          queue << these.next
+          yielder << queue.shift
+        rescue StopIteration
+          break
+        end
+      end
+      objs.each{ |obj| yielder << obj }
+      queue.each{ |this| yielder << this }
+    end
+  end
+
+  def lazy_insert_pos(index, objs)
+    these = self
+    Enumerator.new do |yielder|
+      current_index = -1
+      these.each do |this|
+        current_index += 1
+        objs.each{ |obj| yielder << obj } if current_index == index
+        yielder << this
+      end
+      if current_index < index
+        ((current_index + 1)...index).each{ yielder << nil }
+        objs.each{ |obj| yielder << obj }
       end
     end
   end
