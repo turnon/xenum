@@ -55,7 +55,24 @@ module Enumerable
     end
   end
 
-  def merge_sort(that)
+  def merge_sort(*enums)
+    case enums.size
+    when 0
+      self
+    when 1
+      _merge_sort(enums[0])
+    else
+      enums2 = enums.pop((enums.size / 2) - 1)
+      enum2 = enums.pop
+      e2 = enum2.merge_sort(*enums2)
+      e1 = merge_sort(*enums)
+      e1.merge_sort(e2)
+    end
+  end
+
+  private
+
+  def _merge_sort(that)
     this = Enumerator === self ? self : self.to_enum
     that = Enumerator === that ? that : that.to_enum
 
@@ -102,8 +119,6 @@ module Enumerable
       end
     end
   end
-
-  private
 
   def lazy_insert_neg(index, objs)
     these = Enumerator === self ? self : self.to_enum

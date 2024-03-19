@@ -67,4 +67,8 @@ e.take(5)
 
 [(6..8), [3,4,5], 3.times].reduce(&:merge_sort).to_a
 # [0, 1, 2, 3, 4, 5, 6, 7, 8]
+
+# same result but faster
+(6..8).merge_sort([3,4,5], 3.times).to_a
+# [0, 1, 2, 3, 4, 5, 6, 7, 8]
 ```
