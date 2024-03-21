@@ -42,6 +42,10 @@ works like `Array#insert`, but not limited to `Array`
 # [0, 1, 2, 3, 4, 5, 6, 7, "a", "b", 8, 9]
 ```
 
+### lazy_unshift
+
+just like `lazy_insert(0, ...)`
+
 ### lazy_product
 
 works like `Array#product`, but not limited to `Array`

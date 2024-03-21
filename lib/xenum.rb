@@ -36,6 +36,10 @@ module Enumerable
     end
   end
 
+  def lazy_unshift(*objs)
+    lazy_insert(0, *objs)
+  end
+
   def lazy_product(*enums)
     if enums.empty?
       return Enumerator.new do |yielder|
