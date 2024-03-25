@@ -60,7 +60,7 @@ works like `Array#product`, but not limited to `Array`
 
 ### merge_sort
 
-lazily merge sort two sorted `Enumerable`
+lazily merge sort `Enumerable`
 
 ```ruby
 e = (6..8).merge_sort([3,4,5]).merge_sort(3.times)

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require_relative "xenum/version"
+require_relative "xenum/merge_sort"
 
 module Xenum
-  NULL = Object.new
 end
 
 module Enumerable
@@ -60,69 +60,12 @@ module Enumerable
   end
 
   def merge_sort(*enums)
-    case enums.size
-    when 0
-      self
-    when 1
-      _merge_sort(enums[0])
-    else
-      enums2 = enums.pop((enums.size / 2) - 1)
-      enum2 = enums.pop
-      e2 = enum2.merge_sort(*enums2)
-      e1 = merge_sort(*enums)
-      e1.merge_sort(e2)
-    end
+    enums << self
+    Xenum::MergeSort.iter(*enums)
   end
 
   private
 
-  def _merge_sort(that)
-    this = Enumerator === self ? self : self.to_enum
-    that = Enumerator === that ? that : that.to_enum
-
-    Enumerator.new do |e|
-      a = Xenum::NULL
-      b = Xenum::NULL
-      remain = nil
-
-      loop do
-        if a == Xenum::NULL
-          a = begin
-                this.next
-              rescue StopIteration
-                remain = that
-                break
-              end
-        end
-
-        if b == Xenum::NULL
-          b = begin
-                that.next
-              rescue StopIteration
-                remain = this
-                break
-              end
-        end
-
-        if (a <=> b) <= 0
-          e.yield(a)
-          a = Xenum::NULL
-        else
-          e.yield(b)
-          b = Xenum::NULL
-        end
-      end
-
-      e.yield(a) if a != Xenum::NULL
-      e.yield(b) if b != Xenum::NULL
-
-      loop do
-        e.yield(remain.next)
-      rescue StopIteration
-        break
-      end
-    end
-  end
 
   def lazy_insert_neg(index, objs)
     these = Enumerator === self ? self : self.to_enum
